@@ -184,7 +184,7 @@ Spark Notes
 - An Executor invokes Tasks to work on data blocks, which are replicated across Executors for failover.
 - Data guarantees include: (1) at least once with Receivers; and (2) Exactly once with DirectStreams.
 - On Executor failure, the Driver resends Tasks to another Executor.
-- A Driver Program creates Jobs, schedules Tasks, sends Tasks and retrieves Task results via a Cluster Manager and Worker Nodes.
+- A Driver creates Jobs, schedules Tasks, sends Tasks and retrieves Task results via a Cluster Manager and Worker Nodes.
 - A Job composes a set of Stages, which composes a DAG of RDDs, defined by a set of chained Transformations, terminated by an Action.
 - A Transformation yields an RDD. Transformations are chainable.
 - An Action, a terminal operation on a chain of Transformations, yields a result.
