@@ -100,12 +100,16 @@ Assembly and Run
 ----------------
 1. sbt assembly
 2. java -cp $SCALA_LIB/scala-library.jar:$SPARK_LAUNCHER/spark-launcher_2.11-1.5.0-SNAPSHOT.jar:./target/scala-2.11/spark-app-0.1.jar sc.SparkAppLauncher
-3. OPTIONAL: sbt run [1] spark.SparkApp [2] spark.SparkAppLauncher : Select option 1. Selecting option 2 fails. SparkAppLauncher does not launch SparkApp.
 
 >This is not an ideal option. Moreover, an uber jar is problematic. Instead, go with assembly and submit whenever possible.
 That said, a lightweight uber jar, composing scala-library, spark-launcher and spark app classes/resources is a viable
 option with SparkLauncher, which ultimately calls spark-submit --- which, in addition to a large number of Spark built
 dependencies, loads the spark assembly uber jar.
+
+1. sbt run
+2. [1] spark.SparkApp   [2] spark.SparkAppLauncher
+     
+>Optional: Above, select option 1. Selecting option 2 fails.
 
 Logging
 -------
