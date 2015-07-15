@@ -180,7 +180,7 @@ Spark Notes
 - A Driver executes in a JVM and composes a SparkContext ( optional StreamingContext, SqlContext, etc... ).
 - On Driver failure, Checkpointing must have been configured and used for a successful auto-restart.
 - A Cluster Manager (Standalone, YARN, Mesos ) executes in a JVM or native process and interacts with a Driver and managed Workers.
-- A Worker Node composes an Executor, Cache and Tasks.
+- A Worker composes an Executor, Cache and Tasks.
 - An Executor invokes Tasks to work on data blocks, which are replicated across Executors for failover.
 - Data guarantees include: (1) at least once with Receivers; and (2) Exactly once with DirectStreams.
 - On Executor failure, the Driver resends Tasks to another Executor.
