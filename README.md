@@ -139,6 +139,7 @@ A1. Yes. Data locality is achieved through intelligent connection and cluster to
 5. [Optimizing for Spark/Cassandra Data Locality] (https://www.youtube.com/watch?v=ikCzILOpYvA)
 6. [Spark Streaming, Kafka, Cassandra and Scala] (https://www.parleys.com/tutorial/lambda-architecture-spark-streaming-kafka-cassandra-akka-scala)
 7. [Reliable Spark Stream] (https://www.youtube.com/watch?v=GF2IzQajRO0)
+8. [Getting Started with Spark & Cassandra] (https://www.youtube.com/watch?v=_gFgU3phogQ)
 
 References
 ----------
