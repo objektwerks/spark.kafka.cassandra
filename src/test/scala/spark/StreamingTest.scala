@@ -18,7 +18,6 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
 
 class StreamingTest extends FunSuite with BeforeAndAfterAll {
   val conf = SparkInstance.conf
@@ -41,8 +40,7 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
     streamingContext.checkpoint("./target/output/test/checkpoint/ss")
     val queue = mutable.Queue[RDD[String]]()
     val ds = streamingContext.queueStream(queue)
-    val seq = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
-    queue += context.makeRDD(seq)
+    queue += context.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
     wordCountDs.checkpoint(Milliseconds(1000))
     wordCountDs.saveAsTextFiles("./target/output/test/ds")
@@ -56,8 +54,7 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
     val streamingContext = new StreamingContext(context, Milliseconds(1000))
     val queue = mutable.Queue[RDD[String]]()
     val ds = streamingContext.queueStream(queue)
-    val seq = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
-    queue += context.makeRDD(seq)
+    queue += context.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
     wordCountDs.repartitionByCassandraReplica(keyspaceName = "test", tableName = "kv", partitionsPerHost = 2)
     wordCountDs.saveToCassandra("test", "words", SomeColumns("word", "count"))
@@ -110,8 +107,7 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
     props.put("producer.type", "async")
     val config = new ProducerConfig(props)
     val producer = new Producer[String, String](config)
-    val seq = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
-    val rdd = context.makeRDD(seq)
+    val rdd = context.makeRDD(SparkInstance.license)
     val wordCounts = countWords(rdd).collect()
     val messages = ArrayBuffer[KeyedMessage[String, String]]()
     wordCounts.foreach { wc =>

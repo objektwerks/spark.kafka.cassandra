@@ -5,8 +5,6 @@ import org.apache.spark.HashPartitioner
 import org.apache.spark.sql.SQLContext
 import org.scalatest.FunSuite
 
-import scala.io.Source
-
 case class Person(age: Long, name: String)
 
 class SparkTest extends FunSuite {
@@ -103,8 +101,7 @@ class SparkTest extends FunSuite {
   }
 
   test("text") {
-    val seq = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
-    val rdd = context.makeRDD(seq).cache
+    val rdd = context.makeRDD(SparkInstance.license).cache
     val totalLines = rdd.count
     assert(totalLines == 19)
 
@@ -124,8 +121,7 @@ class SparkTest extends FunSuite {
   }
 
   test("dataframes") {
-    val seq = Source.fromInputStream(getClass.getResourceAsStream("/spark.json.txt")).getLines.toSeq
-    val df = sqlContext.read.json(context.makeRDD(seq))
+    val df = sqlContext.read.json(context.makeRDD(SparkInstance.json))
 
     val names = df.select("name").orderBy("name").collect
     assert(names.length == 4)
@@ -151,8 +147,7 @@ class SparkTest extends FunSuite {
     Until a fix is found, case classes must define fields in alphabetical order.
   */
   test("json-to-case class") {
-    val seq = Source.fromInputStream(getClass.getResourceAsStream("/spark.json.txt")).getLines.toSeq
-    val personRdd = sqlContext.read.json(context.makeRDD(seq)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
+    val personRdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
     val personDf = sqlContext.createDataFrame[Person](personRdd)
     personDf.registerTempTable("persons")
   }
