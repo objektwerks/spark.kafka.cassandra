@@ -26,6 +26,7 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll
+    createKafkaTopic
     sendKafkaProducerMessages
     val connector = CassandraConnector(conf)
     connector.withSessionDo { session =>
@@ -93,13 +94,6 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
   }
 
   private def sendKafkaProducerMessages(): Unit = {
-    val zkClient = new ZkClient("localhost:2181", 3000, 3000, ZKStringSerializer)
-    val metadata = AdminUtils.fetchTopicMetadataFromZk(topic, zkClient)
-    metadata.partitionsMetadata.foreach(println)
-    if (metadata.topic != topic) {
-      AdminUtils.createTopic(zkClient, topic, 1, 1)
-      println(s"Created topic: $topic")
-    }
     val props = new Properties
     props.put("metadata.broker.list", "localhost:9092")
     props.put("key.serializer.class", "kafka.serializer.StringEncoder")
@@ -115,5 +109,15 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
     }
     producer.send(messages:_*)
     println(s"Sent ${messages.size} messages to Kafka topic: $topic.")
+  }
+
+  private def createKafkaTopic(): Unit = {
+    val zkClient = new ZkClient("localhost:2181", 3000, 3000, ZKStringSerializer)
+    val metadata = AdminUtils.fetchTopicMetadataFromZk(topic, zkClient)
+    metadata.partitionsMetadata.foreach(println)
+    if (metadata.topic != topic) {
+      AdminUtils.createTopic(zkClient, topic, 1, 1)
+      println(s"Created topic: $topic")
+    }
   }
 }
