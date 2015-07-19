@@ -173,7 +173,7 @@ Spark Notes
 > Logical Flow
 
 - Driver 1 --- Task --- > * Executor * --- Result --- > * Store
-- Driver 1 <--- Task / Result --- > * Executor
+- Driver 1 <--- Task > | < Result --- > * Executor
 
 > Logical Architecture
 
