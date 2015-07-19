@@ -157,6 +157,9 @@ Books
 Articles
 --------
 1. [Exactly-once Spark Streaming from Apache Kafka] (http://blog.cloudera.com/blog/2015/03/exactly-once-spark-streaming-from-apache-kafka/)
+2. [Working with Spark] (http://blog.cloudera.com/blog/2015/03/how-to-tune-your-apache-spark-jobs-part-2/)
+3. [Spark Job Tuning, Part I] (http://blog.cloudera.com/blog/2015/03/how-to-tune-your-apache-spark-jobs-part-1/)
+4. [Spark Job Tuning, Part II] (http://blog.cloudera.com/blog/2015/03/how-to-tune-your-apache-spark-jobs-part-2/)
 
 Issues
 ------
