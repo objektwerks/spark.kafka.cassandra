@@ -1,6 +1,5 @@
 package spark
 
-import common._
 import org.apache.spark.HashPartitioner
 import org.apache.spark.sql.SQLContext
 import org.scalatest.FunSuite

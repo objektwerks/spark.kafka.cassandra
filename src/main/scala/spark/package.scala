@@ -1,7 +1,7 @@
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
 
-package object common {
+package object spark {
   def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
     rdd.flatMap(l => l.split("\\P{L}+")).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
   }

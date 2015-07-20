@@ -4,7 +4,6 @@ import java.util.Properties
 
 import com.datastax.spark.connector.SomeColumns
 import com.datastax.spark.connector.cql.CassandraConnector
-import common._
 import kafka.admin.AdminUtils
 import kafka.producer.{KeyedMessage, Producer, ProducerConfig}
 import kafka.serializer.StringDecoder
