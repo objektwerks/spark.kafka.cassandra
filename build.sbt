@@ -9,8 +9,6 @@ libraryDependencies ++= {
     "org.apache.spark" % "spark-core_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-streaming_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-sql_2.11" % sparkVersion % "provided",
-    "org.apache.spark" % "spark-mllib_2.11" % sparkVersion % "provided",
-    "org.apache.spark" % "spark-graphx_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-streaming-kafka_2.11" % sparkVersion % "provided",
     "org.apache.kafka" % "kafka_2.11" % "0.8.2.1" % "provided",
     "com.datastax.spark" % "spark-cassandra-connector_2.11" % "1.4.0-M1" % "provided",
