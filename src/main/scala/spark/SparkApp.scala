@@ -20,7 +20,7 @@ object SparkApp extends App {
     val ds = streamingContext.queueStream(queue)
     val seq = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
     queue += context.makeRDD(seq)
-    val wordCountDs = countWords(ds)
+    val wordCountDs = ds.flatMap(l => l.split("\\P{L}+")).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
     wordCountDs.saveAsTextFiles("./target/output/main/ds")
     wordCountDs.foreachRDD(rdd => {
       rdd.saveAsTextFile("./target/output/main/rdd")

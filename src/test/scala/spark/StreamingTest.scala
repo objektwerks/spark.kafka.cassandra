@@ -37,12 +37,10 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
 
   test("stateless spark streaming") {
     val streamingContext = new StreamingContext(context, Milliseconds(1000))
-    streamingContext.checkpoint("./target/output/test/checkpoint/ss")
     val queue = mutable.Queue[RDD[String]]()
     val ds = streamingContext.queueStream(queue)
     queue += context.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
-    wordCountDs.checkpoint(Milliseconds(1000))
     wordCountDs.saveAsTextFiles("./target/output/test/ds")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
