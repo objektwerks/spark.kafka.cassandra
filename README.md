@@ -198,4 +198,5 @@ Spark Notes
 
 Kafka Notes
 -----------
+- kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic license
 - kafka-topics.sh --zookeeper localhost:2181 --list
