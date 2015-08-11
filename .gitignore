@@ -1,10 +1,7 @@
-*.class
-*.log
-.cache
-.lib/
-dist/*
 target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
+project/project/
+project/target/
+.idea
+.ensime
+.ensime_cache
+.DS_Store
