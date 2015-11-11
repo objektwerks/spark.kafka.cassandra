@@ -2,9 +2,8 @@ name := "objektwerks.spark"
 version := "0.1"
 scalaVersion := "2.11.7"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
-
 libraryDependencies ++= {
-  val sparkVersion = "1.5.1"
+  val sparkVersion = "1.5.2"
   Seq(
     "org.apache.spark" % "spark-core_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-streaming_2.11" % sparkVersion % "provided",
@@ -16,7 +15,6 @@ libraryDependencies ++= {
     "org.scalatest" % "scalatest_2.11" % "2.2.5" % "test"
   )
 }
-
 scalacOptions ++= Seq(
   "-language:postfixOps",
   "-language:implicitConversions",
@@ -28,11 +26,8 @@ scalacOptions ++= Seq(
   "-Xlint",
   "-Xfatal-warnings"
 )
-
 javaOptions += "-server -Xss1m -Xmx2g"
-
 fork in test := true
-
 run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run))
 
 import java.util.jar.Attributes.Name._
