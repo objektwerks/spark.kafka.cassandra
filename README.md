@@ -1,7 +1,7 @@
 Spark, Cassandra and Kafka Prototypes
 -------------------------------------
 >The purpose of the project is to test Spark, Spark-Cassandra Connector and Kafka-Spark Streaming features using
- Scala 2.11.7. And, yes, this will hurt.;)
+ Scala 2.11.7. And, yes, this will hurt.;) WARNING: Spark-Cassandra-Connector 1.5-M* is incompatible with Spark 1.5
 
 ***
 

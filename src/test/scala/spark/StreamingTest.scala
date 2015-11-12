@@ -54,7 +54,7 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
     val ds = streamingContext.queueStream(queue)
     queue += context.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
-    wordCountDs.repartitionByCassandraReplica(keyspaceName = "test", tableName = "kv", partitionsPerHost = 2)
+    wordCountDs.repartitionByCassandraReplica(keyspaceName = "test", tableName = "words", partitionsPerHost = 2)
     wordCountDs.saveToCassandra("test", "words", SomeColumns("word", "count"))
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
