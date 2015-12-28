@@ -48,6 +48,7 @@ Spark
 Kafka
 -----
 >Install Kafka from github. The brew and apache distros are Scala 2.10 oriented.
+> NOTE: Scala 2.11 distro is now provided. If so follow steps 4 and 5.
 
 1. git clone https://github.com/apache/kafka
 2. gradle
