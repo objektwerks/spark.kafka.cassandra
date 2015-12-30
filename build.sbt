@@ -1,4 +1,4 @@
-name := "objektwerks.spark"
+name := "objektwerks.spark.kafka.cassandra"
 version := "0.1"
 scalaVersion := "2.11.7"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
