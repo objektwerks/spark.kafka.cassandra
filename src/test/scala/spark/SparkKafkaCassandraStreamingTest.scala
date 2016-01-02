@@ -18,7 +18,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-class StreamingTest extends FunSuite with BeforeAndAfterAll {
+class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
   val conf = SparkInstance.conf
   val context = SparkInstance.context
   val topic = "license"

@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
 
 case class KeyValue(key: String, value: Int)
 
-class CassandraTest extends FunSuite with BeforeAndAfterAll {
+class CassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
   val conf = SparkInstance.conf
   val context = SparkInstance.context
   val sqlContext = new CassandraSQLContext(context)

@@ -10,7 +10,7 @@ libraryDependencies ++= {
     "org.apache.spark" % "spark-sql_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-streaming-kafka_2.11" % sparkVersion % "provided",
     "org.apache.kafka" % "kafka_2.11" % "0.8.2.2" % "provided",
-    "com.datastax.spark" % "spark-cassandra-connector_2.11" % "1.4.0" % "provided",
+    "com.datastax.spark" % "spark-cassandra-connector_2.11" % "1.4.1" % "provided",
     "org.slf4j" % "slf4j-api" % "1.7.13" % "test",
     "org.scalatest" % "scalatest_2.11" % "2.2.5" % "test"
   )
