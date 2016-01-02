@@ -10,7 +10,7 @@ import kafka.serializer.StringDecoder
 import kafka.utils.ZKStringSerializer
 import org.I0Itec.zkclient.ZkClient
 import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.dstream.InputDStream
+import org.apache.spark.streaming.dstream.{DStream, InputDStream}
 import org.apache.spark.streaming.kafka.{KafkaUtils, OffsetRange}
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
@@ -25,8 +25,8 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll
-    createKafkaTopic
-    sendKafkaProducerMessages
+    createKafkaTopic()
+    sendKafkaProducerMessages()
     val connector = CassandraConnector(conf)
     connector.withSessionDo { session =>
       session.execute("DROP KEYSPACE IF EXISTS test;")
@@ -116,5 +116,13 @@ class StreamingTest extends FunSuite with BeforeAndAfterAll {
       AdminUtils.createTopic(zkClient, topic, 1, 1)
       println(s"Created topic: $topic")
     }
+  }
+
+  private def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
+    rdd.flatMap(l => l.split("\\P{L}+")).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
+  }
+
+  private def countWords(ds: DStream[String]): DStream[(String, Int)] = {
+    ds.flatMap(l => l.split("\\P{L}+")).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
   }
 }
