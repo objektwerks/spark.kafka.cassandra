@@ -24,7 +24,7 @@ Environment
 -----------
 >The following environment variables should be in your .bash_profile
 
-- export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home"
+- export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_72.jdk/Contents/Home"
 - export CASSANDRA_HOME="/usr/local/Cellar/cassandra/2.1.6/libexec"
 - export KAFKA_HOME="/Users/javawerks/workspace/apache/kafka"
 - export SCALA_VERSION="2.11.7"
@@ -49,7 +49,7 @@ Kafka
 -----
 >Install Kafka from github. The brew and apache distros are Scala 2.10 oriented. *NOTE:* Scala 2.11 distro is now provided. If so follow only steps 4 and 5.
 
-1. git clone https://github.com/apache/kafka
+1. git clone --branch branch-0.8.2 https://github.com/apache/kafka
 2. gradle
 3. gradle -PscalaVersion=2.11.7 jar
 4. edit $KAFKA_HOME/config/server.properties log.dirs=$KAFKA_HOME/logs
