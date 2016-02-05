@@ -146,6 +146,11 @@ Issues
 3. [Kafka Jira] (https://issues.apache.org/jira/browse/KAFKA/?selectedTab=com.atlassian.jira.jira-projects-plugin:issues-panel)
 4. [ZooKeeper] (https://issues.apache.org/jira/browse/ZOOKEEPER/?selectedTab=com.atlassian.jira.jira-projects-plugin:issues-panel)
 
+Kafka Notes
+-----------
+- kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic license
+- kafka-topics.sh --zookeeper localhost:2181 --list
+
 Spark Notes
 -----------
 > Logical Flow
@@ -157,7 +162,7 @@ Spark Notes
 
 - Driver 1 ---> 1 ClusterManager 1 ---> * Worker
 
->Notes
+>Scenarios
 
 - A Driver executes in a JVM and composes a SparkContext ( optional StreamingContext, SqlContext, etc... ).
 - On Driver failure, Checkpointing must have been configured and used for a successful auto-restart.
@@ -173,8 +178,3 @@ Spark Notes
 - An RDD composes Partitions. Partitions are tunable.
 - A Task executes Transformation logic on a Partition.
 - A DStream composes a set of RDDs, which can be analyzed in micro-batches across a measured, finite windows of time.
-
-Kafka Notes
------------
-- kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic license
-- kafka-topics.sh --zookeeper localhost:2181 --list
