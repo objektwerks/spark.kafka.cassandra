@@ -37,10 +37,10 @@ Environment
 
 Spark
 -----
->Install Spark from github. The brew and apache distros are Scala 2.10 oriented.
+>Install Spark release ( branch-1.4.1 ) from github. The brew and apache distros are Scala 2.10 oriented.
 
-1. git clone https://github.com/apache/spark
-2. dev/change-version-to-2.11.sh
+1. git clone --branch branch-1.4.1 https://github.com/apache/spark/
+2. dev/change-scala-version.sh 2.11
 3. mvn -Pyarn -Phadoop-2.6 -Dscala-2.11 -DskipTests clean package
 
 >See [Scala 2.11 Support Instructions] (http://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211)
