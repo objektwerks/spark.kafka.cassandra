@@ -153,12 +153,12 @@ Kafka Notes
 
 Spark Notes
 -----------
-> Logical Flow
+>Logical Flow
 
 - Driver 1 --- Task --- > * Executor * --- Result --- > * Store
 - Driver 1 <--- Task > | < Result --- > * Executor
 
-> Logical Architecture
+>Logical Architecture
 
 - Driver 1 ---> 1 ClusterManager 1 ---> * Worker
 
