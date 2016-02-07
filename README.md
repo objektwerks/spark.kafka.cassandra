@@ -104,9 +104,8 @@ Output
 
 Questions
 ---------
-Q1. Does the Spark-Cassandra Connector co-locate code and data?
-
-A1. Yes. Data locality is achieved through intelligent connection and cluster topology management and awareness by
+- Q. Does the Spark-Cassandra Connector co-locate code and data?
+- A. Yes. Data locality is achieved through intelligent connection and cluster topology management and awareness by
     Spark, Cassandra and the Spark-Cassandra Connector. Spark and Cassandra partition tuning is critical. See these
     links for details:
 
@@ -153,28 +152,4 @@ Kafka Notes
 
 Spark Notes
 -----------
->Logical Flow
-
-- Driver 1 --- Task --- > * Executor * --- Result --- > * Store
-- Driver 1 <--- Task > | < Result --- > * Executor
-
->Logical Architecture
-
-- Driver 1 ---> 1 ClusterManager 1 ---> * Worker
-
->Scenarios
-
-- A Driver executes in a JVM and composes a SparkContext ( optional StreamingContext, SqlContext, etc... ).
-- On Driver failure, Checkpointing must have been configured and used for a successful auto-restart.
-- A Cluster Manager (Standalone, YARN, Mesos ) executes in a JVM or native process and interacts with a Driver and managed Workers.
-- A Worker composes an Executor, Cache and Tasks.
-- An Executor invokes Tasks to work on data blocks, which are replicated across Executors for failover.
-- Data guarantees include: (1) at least once with Receivers; and (2) Exactly once with DirectStreams.
-- On Executor failure, the Driver resends Tasks to another Executor.
-- A Driver creates Jobs, schedules Tasks, sends Tasks and retrieves Task results via a Cluster Manager and Worker Nodes.
-- A Job composes a set of Stages, which composes a DAG of RDDs, defined by a set of chained Transformations, terminated by an Action.
-- A Transformation yields an RDD. Transformations are chainable.
-- An Action, a terminal operation on a chain of Transformations, yields a result.
-- An RDD composes Partitions. Partitions are tunable.
-- A Task executes Transformation logic on a Partition.
-- A DStream composes a set of RDDs, which can be analyzed in micro-batches across a measured, finite windows of time.
+>See: https://github.com/objektwerks/spark#spark-notes
