@@ -2,6 +2,7 @@ Spark, Kafka and Cassandra Prototypes
 -------------------------------------
 >The purpose of the project is to test Spark, Spark-Cassandra Connector and Kafka-Spark Streaming features.
 
+>**WARNING** Streaming and RDD tests fail due to: kafka.cluster.BrokerEndPoint cannot be cast to kafka.cluster.Broker
 
 Homebrew
 --------
