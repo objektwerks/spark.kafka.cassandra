@@ -2,7 +2,6 @@ package spark
 
 import com.datastax.spark.connector._
 import com.datastax.spark.connector.cql.CassandraConnector
-import org.apache.spark.sql.cassandra.CassandraSQLContext
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import scala.concurrent.duration._
@@ -14,7 +13,6 @@ case class KeyValue(key: String, value: Int)
 class CassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
   val conf = SparkInstance.conf
   val context = SparkInstance.context
-  val sqlContext = new CassandraSQLContext(context)
 
   override protected def beforeAll(): Unit = {
     super.beforeAll
@@ -67,23 +65,5 @@ class CassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
       case Failure(failure) => throw failure
     }
     Await.result(future, 3 seconds)
-  }
-
-  test("cql select") {
-    val df = sqlContext.sql("select * from test.kv")
-    assert(df.count == 6)
-    val max = df.agg("value" -> "max").first
-    assert(max.getInt(0) == 6)
-    val sum = df.agg("value" -> "sum").first
-    assert(sum.getLong(0) == 21)
-  }
-
-  test("cql select where") {
-    val df = sqlContext.sql("select value from test.kv where value > 3")
-    assert(df.count == 3)
-    val max = df.agg("value" -> "max").first
-    assert(max.getInt(0) == 6)
-    val sum = df.agg("value" -> "sum").first
-    assert(sum.getLong(0) == 15)
   }
 }
