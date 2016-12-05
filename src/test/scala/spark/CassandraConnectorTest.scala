@@ -34,7 +34,6 @@ class CassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
     assert(rdd.tableName == "kv")
     assert(rdd.selectedColumnNames == Seq("key", "value"))
     assert(rdd.count == 3)
-    assert(rdd.first.getInt("value") == 1)
     assert(rdd.map(_.getInt("value")).sum == 6)
   }
 

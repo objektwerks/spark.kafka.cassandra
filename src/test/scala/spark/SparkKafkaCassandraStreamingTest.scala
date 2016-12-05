@@ -27,9 +27,9 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
     sendKafkaProducerMessages()
     val connector = CassandraConnector(conf)
     connector.withSessionDo { session =>
-      session.execute("DROP KEYSPACE IF EXISTS test;")
-      session.execute("CREATE KEYSPACE test WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
-      session.execute("CREATE TABLE test.words(word text PRIMARY KEY, count int);")
+      session.execute("DROP KEYSPACE IF EXISTS streaming;")
+      session.execute("CREATE KEYSPACE streaming WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
+      session.execute("CREATE TABLE streaming.words(word text PRIMARY KEY, count int);")
     }
   }
 
@@ -52,8 +52,8 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
     val ds = streamingContext.queueStream(queue)
     queue += context.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
-    wordCountDs.repartitionByCassandraReplica(keyspaceName = "test", tableName = "words", partitionsPerHost = 2)
-    wordCountDs.saveToCassandra("test", "words", SomeColumns("word", "count"))
+    wordCountDs.repartitionByCassandraReplica(keyspaceName = "streaming", tableName = "words", partitionsPerHost = 2)
+    wordCountDs.saveToCassandra("streaming", "words", SomeColumns("word", "count"))
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
@@ -62,7 +62,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
   test("streaming cassandra read") {
     import com.datastax.spark.connector.streaming._
     val streamingContext = new StreamingContext(context, Milliseconds(1000))
-    val rdd = streamingContext.cassandraTable("test", "words").select("word", "count").cache
+    val rdd = streamingContext.cassandraTable("streaming", "words").select("word", "count").cache
     assert(rdd.count == 95)
     assert(rdd.map(_.getInt("count")).sum == 168)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
