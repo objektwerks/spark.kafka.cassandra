@@ -16,12 +16,17 @@ object SparkInstance {
   val context = new SparkContext(conf)
   val license = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
   val kafkaProducerProperties = loadProperties("/kafka.producer.properties")
-  val kafkaConsumerProperties = loadProperties("/kafka.consumer.properties").asInstanceOf[Map[String, String]]
+  val kafkaConsumerProperties = toMap(loadProperties("/kafka.consumer.properties"))
   val kafkaTopic = "license"
 
   private def loadProperties(file: String): Properties = {
     val properties = new Properties()
     properties.load(Source.fromInputStream(getClass.getResourceAsStream(file)).bufferedReader())
     properties
+  }
+
+  private def toMap(properties: Properties): Map[String, String] = {
+    import scala.collection.JavaConverters._
+    properties.asScala.toMap
   }
 }
