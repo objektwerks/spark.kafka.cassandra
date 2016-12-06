@@ -2,8 +2,6 @@ Spark, Kafka and Cassandra Prototypes
 -------------------------------------
 >The purpose of the project is to test Spark, Spark-Cassandra Connector and Kafka-Spark Streaming features.
 
->**WARNING** Streaming and RDD tests fail due to: kafka.cluster.BrokerEndPoint cannot be cast to kafka.cluster.Broker
-
 Homebrew
 --------
 >Install Homebrew on OSX. [How-To] (http://coolestguidesontheplanet.com/installing-homebrew-os-x-yosemite-10-10-package-manager-unix-apps/)
