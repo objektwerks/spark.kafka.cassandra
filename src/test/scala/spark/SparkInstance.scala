@@ -16,6 +16,7 @@ object SparkInstance {
   val context = new SparkContext(conf)
   val license = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
   val kafkaProducerProperties = loadProperties("/kafka.producer.properties")
+  val kafkaConsumerProperties = loadProperties("/kafka.consumer.properties")
   val kafkaTopic = "license"
 
   private def loadProperties(file: String): Properties = {
