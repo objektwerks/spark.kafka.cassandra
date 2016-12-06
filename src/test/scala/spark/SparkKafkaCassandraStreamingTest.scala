@@ -6,12 +6,13 @@ import java.util.concurrent.atomic.AtomicInteger
 import com.datastax.spark.connector.SomeColumns
 import com.datastax.spark.connector.cql.CassandraConnector
 import kafka.admin.AdminUtils
-import kafka.serializer.StringDecoder
 import kafka.utils.ZkUtils
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.kafka.{KafkaUtils, OffsetRange}
+import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
+import org.apache.spark.streaming.kafka010.KafkaUtils
+import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
@@ -70,20 +71,17 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
 
   test("kafka spark streaming") {
     val streamingContext = new StreamingContext(context, Milliseconds(1000))
-    val kafkaParams = Map("bootstrap.servers" -> "localhost:9092", "auto.offset.reset" -> "smallest")
-    val topics = Set(SparkInstance.kafkaTopic)
-    val is = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](streamingContext, kafkaParams, topics)
-    is.saveAsTextFiles("./target/output/test/text/dstream")
+    val kafkaParams = SparkInstance.kafkaConsumerProperties
+    val kafkaTopics = Set(SparkInstance.kafkaTopic)
+    val stream = KafkaUtils.createDirectStream[String, String](
+      streamingContext,
+      PreferConsistent,
+      Subscribe[String, String](kafkaTopics, kafkaParams)
+    )
+    stream.saveAsTextFiles("./target/output/test/text/dstream")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-  }
-
-  test("kafka spark rdd") {
-    val kafkaParams = Map("bootstrap.servers" -> "localhost:9092")
-    val offsetRanges = Array(OffsetRange(topic = SparkInstance.kafkaTopic, partition = 0, fromOffset = 0, untilOffset = 94))
-    val rdd = KafkaUtils.createRDD[String, String, StringDecoder, StringDecoder](context, kafkaParams, offsetRanges)
-    rdd.saveAsTextFile("./target/output/test/text/rdd")
   }
 
   private def sendKafkaProducerMessages(): Unit = {
