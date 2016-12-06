@@ -93,7 +93,6 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
       val record = new ProducerRecord[String, String](SparkInstance.kafkaTopic, 0, wc._1, wc._2.toString)
       producer.send(record)
       messages.incrementAndGet()
-
     }
     producer.close(3000L, TimeUnit.MILLISECONDS)
     println(s"Sent ${messages.get} messages to Kafka topic: ${SparkInstance.kafkaTopic}.")
