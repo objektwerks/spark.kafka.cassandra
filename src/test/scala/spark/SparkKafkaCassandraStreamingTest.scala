@@ -3,8 +3,8 @@ package spark
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
+import com.datastax.driver.core.Cluster
 import com.datastax.spark.connector.SomeColumns
-import com.datastax.spark.connector.cql.CassandraConnector
 import kafka.admin.AdminUtils
 import kafka.utils.ZkUtils
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
@@ -19,26 +19,23 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import scala.collection.mutable
 
 class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
-  val conf = SparkInstance.conf
-  val context = SparkInstance.context
+  val sparkContext = SparkInstance.sparkSession.sparkContext
 
   override protected def beforeAll(): Unit = {
-    super.beforeAll
     createKafkaTopic()
     sendKafkaProducerMessages()
-    val connector = CassandraConnector(conf)
-    connector.withSessionDo { session =>
-      session.execute("DROP KEYSPACE IF EXISTS streaming;")
-      session.execute("CREATE KEYSPACE streaming WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
-      session.execute("CREATE TABLE streaming.words(word text PRIMARY KEY, count int);")
-    }
+    val cluster = Cluster.builder.addContactPoint("127.0.0.1").build()
+    val session = cluster.connect()
+    session.execute("DROP KEYSPACE IF EXISTS streaming;")
+    session.execute("CREATE KEYSPACE streaming WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
+    session.execute("CREATE TABLE streaming.words(word text PRIMARY KEY, count int);")
   }
 
   test("stateless spark streaming") {
-    val streamingContext = new StreamingContext(context, Milliseconds(1000))
+    val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
     val queue = mutable.Queue[RDD[String]]()
     val ds = streamingContext.queueStream(queue)
-    queue += context.makeRDD(SparkInstance.license)
+    queue += sparkContext.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
     wordCountDs.saveAsTextFiles("./target/output/test/ds")
     streamingContext.start
@@ -48,10 +45,10 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
 
   test("streaming cassandra write") {
     import com.datastax.spark.connector.streaming._
-    val streamingContext = new StreamingContext(context, Milliseconds(1000))
+    val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
     val queue = mutable.Queue[RDD[String]]()
     val ds = streamingContext.queueStream(queue)
-    queue += context.makeRDD(SparkInstance.license)
+    queue += sparkContext.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
     wordCountDs.repartitionByCassandraReplica(keyspaceName = "streaming", tableName = "words", partitionsPerHost = 2)
     wordCountDs.saveToCassandra("streaming", "words", SomeColumns("word", "count"))
@@ -62,7 +59,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
 
   test("streaming cassandra read") {
     import com.datastax.spark.connector.streaming._
-    val streamingContext = new StreamingContext(context, Milliseconds(1000))
+    val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
     val rdd = streamingContext.cassandraTable("streaming", "words").select("word", "count").cache
     assert(rdd.count == 95)
     assert(rdd.map(_.getInt("count")).sum == 168)
@@ -70,7 +67,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
   }
 
   test("kafka spark streaming") {
-    val streamingContext = new StreamingContext(context, Milliseconds(1000))
+    val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
     val kafkaParams = SparkInstance.kafkaConsumerProperties
     val kafkaTopics = Set(SparkInstance.kafkaTopic)
     val stream = KafkaUtils.createDirectStream[String, String](
@@ -86,7 +83,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
 
   private def sendKafkaProducerMessages(): Unit = {
     val producer = new KafkaProducer[String, String](SparkInstance.kafkaProducerProperties)
-    val rdd = context.makeRDD(SparkInstance.license)
+    val rdd = sparkContext.makeRDD(SparkInstance.license)
     val wordCounts = countWords(rdd).collect()
     val messages = new AtomicInteger()
     wordCounts.foreach { wc =>

@@ -2,18 +2,18 @@ package spark
 
 import java.util.Properties
 
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.SparkSession
 
 import scala.io.Source
 
 object SparkInstance {
-  val conf = new SparkConf(loadDefaults = true)
-    .setMaster("local[2]")
-    .setAppName("sparky")
-    .set("spark.cassandra.connection.host", "127.0.0.1")
-    .set("spark.cassandra.auth.username", "cassandra")
-    .set("spark.cassandra.auth.password", "cassandra")
-  val context = new SparkContext(conf)
+  val sparkSession = SparkSession.builder
+    .master("local[2]")
+    .appName("sparky")
+    .config("spark.cassandra.connection.host", "127.0.0.1")
+    .config("spark.cassandra.auth.username", "cassandra")
+    .config("spark.cassandra.auth.password", "cassandra")
+    .getOrCreate()
   val license = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
   val kafkaProducerProperties = loadProperties("/kafka.producer.properties")
   val kafkaConsumerProperties = toMap(loadProperties("/kafka.consumer.properties"))
