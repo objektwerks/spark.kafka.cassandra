@@ -1,6 +1,6 @@
 name := "spark.kafka.cassandra"
 organization := "objektwerks"
-version := "0.1"
+version := "0.1-SNAPSHOT"
 scalaVersion := "2.11.8"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 libraryDependencies ++= {
