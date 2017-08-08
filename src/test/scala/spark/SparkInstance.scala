@@ -19,13 +19,13 @@ object SparkInstance {
   val kafkaConsumerProperties = toMap(loadProperties("/kafka.consumer.properties"))
   val kafkaTopic = "license"
 
-  private def loadProperties(file: String): Properties = {
+  def loadProperties(file: String): Properties = {
     val properties = new Properties()
     properties.load(Source.fromInputStream(getClass.getResourceAsStream(file)).bufferedReader())
     properties
   }
 
-  private def toMap(properties: Properties): Map[String, String] = {
+  def toMap(properties: Properties): Map[String, String] = {
     import scala.collection.JavaConverters._
     properties.asScala.toMap
   }

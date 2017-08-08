@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
 
 case class KeyValue(key: String, value: Int)
 
-class CassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
+class SparkCassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
   val sparkContext = SparkInstance.sparkSession.sparkContext
 
   override protected def beforeAll(): Unit = {
