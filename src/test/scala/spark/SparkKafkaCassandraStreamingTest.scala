@@ -14,11 +14,11 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
 import scala.collection.mutable
 
-class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
+class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll with Matchers {
   import SparkInstance._
 
   val logger = Logger.getLogger(classOf[SparkKafkaCassandraStreamingTest])
@@ -60,8 +60,8 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll {
     import com.datastax.spark.connector.streaming._
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
     val rdd = streamingContext.cassandraTable("streaming", "words").select("word", "count").cache
-    assert(rdd.count == 95)
-    assert(rdd.map(_.getInt("count")).sum == 168)
+    rdd.count shouldBe 95
+    rdd.map(_.getInt("count")).sum shouldBe 168
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
   }
 

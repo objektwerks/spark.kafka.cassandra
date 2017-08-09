@@ -2,7 +2,7 @@ package spark
 
 import com.datastax.driver.core.Cluster
 import com.datastax.spark.connector._
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
 
 case class KeyValue(key: String, value: Int)
 
-class SparkCassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
+class SparkCassandraConnectorTest extends FunSuite with BeforeAndAfterAll with Matchers {
   val sparkContext = SparkInstance.sparkSession.sparkContext
 
   override protected def beforeAll(): Unit = {
@@ -27,11 +27,11 @@ class SparkCassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
   test("read") {
     val rdd = sparkContext.cassandraTable(keyspace = "test", table = "kv").cache
     rdd.repartitionByCassandraReplica(keyspaceName = "test", tableName = "kv", partitionsPerHost = 2)
-    assert(rdd.keyspaceName == "test")
-    assert(rdd.tableName == "kv")
-    assert(rdd.selectedColumnNames == Seq("key", "value"))
-    assert(rdd.count == 3)
-    assert(rdd.map(_.getInt("value")).sum == 6)
+    rdd.keyspaceName shouldBe "test"
+    rdd.tableName shouldBe "kv"
+    rdd.selectedColumnNames shouldBe Seq("key", "value")
+    rdd.count shouldBe 3
+    rdd.map(_.getInt("value")).sum shouldBe 6
   }
 
   test("write") {
@@ -39,25 +39,25 @@ class SparkCassandraConnectorTest extends FunSuite with BeforeAndAfterAll {
     seq.saveToCassandra("test", "kv", SomeColumns("key", "value"))
     val rdd = sparkContext.cassandraTable(keyspace = "test", table = "kv").cache
     rdd.repartitionByCassandraReplica(keyspaceName = "test", tableName = "kv", partitionsPerHost = 2)
-    assert(rdd.count == 6)
-    assert(rdd.map(_.getInt("value")).sum == 21)
+    rdd.count shouldBe 6
+    rdd.map(_.getInt("value")).sum shouldBe 21
   }
 
   test("tuples") {
     val tuples = sparkContext.cassandraTable[(String, Int)](keyspace = "test", table = "kv").select("key", "value").collect
-    assert(tuples.map(_._2).sum == 21)
+    tuples.map(_._2).sum shouldBe 21
   }
 
   test("case class") {
     val keyValues = sparkContext.cassandraTable[KeyValue](keyspace = "test", table = "kv").collect
-    assert(keyValues.map(_.value).sum == 21)
+    keyValues.map(_.value).sum shouldBe 21
   }
 
   test("case class future") {
     implicit val ec = ExecutionContext.global
     val future = sparkContext.cassandraTable[KeyValue](keyspace = "test", table = "kv").collectAsync
     future onComplete {
-      case Success(keyValues) => assert(keyValues.map(_.value).sum == 21)
+      case Success(keyValues) => keyValues.map(_.value).sum shouldBe 21
       case Failure(failure) => throw failure
     }
     Await.result(future, 3 seconds)
