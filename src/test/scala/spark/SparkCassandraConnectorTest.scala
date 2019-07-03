@@ -7,6 +7,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
 import scala.util.{Failure, Success}
+import scala.language.postfixOps
 
 case class KeyValue(key: String, value: Int)
 

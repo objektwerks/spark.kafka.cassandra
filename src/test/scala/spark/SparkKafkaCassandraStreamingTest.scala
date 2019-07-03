@@ -1,11 +1,10 @@
 package spark
 
-import java.util.concurrent.TimeUnit
+import java.util.Properties
 
 import com.datastax.driver.core.Cluster
 import com.datastax.spark.connector.SomeColumns
-import kafka.admin.AdminUtils
-import kafka.utils.ZkUtils
+import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.log4j.Logger
 import org.apache.spark.rdd.RDD
@@ -16,6 +15,7 @@ import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll with Matchers {
@@ -80,12 +80,13 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll w
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
   }
 
-  def createKafkaTopic(): Unit = {
-    val zkClient = ZkUtils.createZkClient("localhost:2181", 10000, 10000)
-    val zkUtils = ZkUtils(zkClient, isZkSecurityEnabled = false)
-    val metadata = AdminUtils.fetchTopicMetadataFromZk(kafkaTopic, zkUtils)
-    println(s"Kafka topic: ${metadata.topic}")
-    zkClient.close()
+  def createKafkaTopic(): Boolean = {
+    val adminClientProperties = new Properties()
+    adminClientProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+    val adminClient = AdminClient.create(adminClientProperties)
+    val newTopic = new NewTopic(kafkaTopic, 1, 1.toShort)
+    val createTopicResult = adminClient.createTopics(List(newTopic).asJavaCollection)
+    createTopicResult.values().containsKey(kafkaTopic)
   }
 
   def sendKafkaProducerMessages(): Unit = {
@@ -100,7 +101,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll w
       logger.info(s"Producer -> key: ${record.key} value: ${record.value}")
     }
     producer.flush()
-    producer.close(3000L, TimeUnit.MILLISECONDS)
+    producer.close()
   }
 
   def createCassandraKeyspace(): Unit = {
