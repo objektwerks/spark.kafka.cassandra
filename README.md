@@ -35,3 +35,13 @@ Services
 Test
 ----
 1. sbt clean test
+
+Kafka
+-----
+* kafka-topics --zookeeper localhost:2181 --list
+* kafka-topics --zookeeper localhost:2181 --describe --topic license
+* kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic license --time -1
+* kafka-consumer-groups --bootstrap-server localhost:9092 --group objektwerks-group --describe
+* kafka-topics --zookeeper localhost:2181 --delete --topic license
+* kafka-consumer-groups --bootstrap-server localhost:9092 --list
+* kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group objektwerks-group
