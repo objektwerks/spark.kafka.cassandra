@@ -15,8 +15,8 @@ object SparkInstance {
     .config("spark.cassandra.auth.password", "cassandra")
     .getOrCreate()
   val license = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
-  val kafkaProducerProperties = loadProperties("/kafka.producer.properties")
-  val kafkaConsumerProperties = toMap(loadProperties("/kafka.consumer.properties"))
+  val kafkaProducerProperties = loadProperties("/kafka-producer.properties")
+  val kafkaConsumerProperties = toMap(loadProperties("/kafka-consumer.properties"))
   val kafkaTopic = "license"
 
   def loadProperties(file: String): Properties = {
