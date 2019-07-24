@@ -110,6 +110,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll w
     session.execute("DROP KEYSPACE IF EXISTS streaming;")
     session.execute("CREATE KEYSPACE streaming WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
     session.execute("CREATE TABLE streaming.words(word text PRIMARY KEY, count int);")
+    ()
   }
 
   def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
