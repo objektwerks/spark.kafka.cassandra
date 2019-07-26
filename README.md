@@ -4,6 +4,10 @@ Spark, Kafka and Cassandra Prototypes
 
 >**WARNING** This project is outdated.
 
+TODO
+----
+1. Build kafka-spark-cassandra pipeline.
+
 Homebrew
 --------
 >Install Homebrew on OSX.
