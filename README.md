@@ -2,12 +2,6 @@ Spark, Kafka and Cassandra Prototypes
 -------------------------------------
 >The purpose of the project is to test Spark, Spark-Cassandra Connector and Kafka-Spark Streaming features.
 
->**WARNING** This project is outdated.
-
-TODO
-----
-1. Build kafka-spark-cassandra pipeline.
-
 Homebrew
 --------
 >Install Homebrew on OSX.
