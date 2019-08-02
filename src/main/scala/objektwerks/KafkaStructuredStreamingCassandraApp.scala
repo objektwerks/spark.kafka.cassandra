@@ -74,9 +74,6 @@ object KafkaStructuredStreamingCassandraApp extends App {
     .load
     .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
     .withColumn("value", upper(col("value")))
-    .groupBy("key")
-    .count()
-    .toDF("key", "value")
     .writeStream
     .foreachBatch { (batchDF: DataFrame, _: Long) =>
       batchDF
