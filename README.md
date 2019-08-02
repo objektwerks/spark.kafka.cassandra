@@ -44,6 +44,8 @@ Run
 
 Kafka
 -----
+> source-kssc-topic, license
+
 * kafka-topics --zookeeper localhost:2181 --list
 * kafka-topics --zookeeper localhost:2181 --describe --topic license
 * kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic license --time -1
