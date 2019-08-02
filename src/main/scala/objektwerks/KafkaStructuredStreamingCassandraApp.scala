@@ -15,8 +15,8 @@ object KafkaStructuredStreamingCassandraApp extends App {
     .add(name = "key", dataType = StringType, nullable = false)
     .add(name = "value", dataType = StringType, nullable = false)
 
-  val cluster = Cluster.builder.addContactPoint("127.0.0.1").build()
-  val session = cluster.connect()
+  val cluster = Cluster.builder.addContactPoint("127.0.0.1").build
+  val session = cluster.connect
   session.execute("DROP KEYSPACE IF EXISTS kssc;")
   session.execute("CREATE KEYSPACE kssc WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
   session.execute("CREATE TABLE kssc.keyvalue(key text PRIMARY KEY, value text);")
@@ -37,7 +37,7 @@ object KafkaStructuredStreamingCassandraApp extends App {
     println("Terminated Spark KafkaStructuredStreamingCassandraApp.")
   }
 
-  sparkSession
+  val consoleQuery = sparkSession
     .readStream
     .format("kafka")
     .option(kafkaBootstrapServers, urls)
@@ -48,9 +48,8 @@ object KafkaStructuredStreamingCassandraApp extends App {
     .outputMode(OutputMode.Append)
     .format("console")
     .start
-    .awaitTermination
 
-  sparkSession
+  val jsonToSourceTopic = sparkSession
     .readStream
     .option("basePath", conf.getString("key-value-json-path"))
     .schema(keyValueStructType)
@@ -62,7 +61,6 @@ object KafkaStructuredStreamingCassandraApp extends App {
     .option("topic", sourceTopic)
     .option("checkpointLocation", conf.getString("source-topic-checkpoint-location"))
     .start
-    .awaitTermination
 
   import org.apache.spark.sql.functions._
 
@@ -88,5 +86,8 @@ object KafkaStructuredStreamingCassandraApp extends App {
     }
     .outputMode("update")
     .start
-    .awaitTermination
+
+  consoleQuery.awaitTermination
+  jsonToSourceTopic.awaitTermination
+  sourceTopicToCassandraTable.awaitTermination
 }
