@@ -88,5 +88,5 @@ object KafkaStructuredStreamingCassandraApp extends App {
     }
     .outputMode("update")
     .start
-    .awaitTermination()
+    .awaitTermination
 }

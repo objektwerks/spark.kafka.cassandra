@@ -36,6 +36,12 @@ Test
 ----
 1. sbt clean test
 
+Run
+---
+>KafkaStructuredStreamingCassandraApp is still a work in progress due to foreachBatch issues with Cassandra.
+
+1. sbt clean test run
+
 Kafka
 -----
 * kafka-topics --zookeeper localhost:2181 --list
