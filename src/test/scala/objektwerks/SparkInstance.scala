@@ -1,4 +1,4 @@
-package spark
+package objektwerks
 
 import java.util.Properties
 

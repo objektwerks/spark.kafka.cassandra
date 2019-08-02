@@ -1,4 +1,4 @@
-package spark
+package objektwerks
 
 import com.datastax.spark.connector._
 import org.scalatest.{FunSuite, Matchers}

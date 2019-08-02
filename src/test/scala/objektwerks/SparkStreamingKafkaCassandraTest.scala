@@ -1,4 +1,4 @@
-package spark
+package objektwerks
 
 import com.datastax.spark.connector.SomeColumns
 import org.apache.spark.rdd.RDD
@@ -32,8 +32,8 @@ class SparkStreamingKafkaCassandraTest extends FunSuite with Matchers {
     val ds = streamingContext.queueStream(queue)
     queue += sparkContext.makeRDD(license)
     val wordCountDs = countWords(ds)
-    wordCountDs.repartitionByCassandraReplica(keyspaceName = "streaming", tableName = "words", partitionsPerHost = 2)
-    wordCountDs.saveToCassandra("streaming", "words", SomeColumns("word", "count"))
+    wordCountDs.repartitionByCassandraReplica(keyspaceName = "objektwerks", tableName = "words", partitionsPerHost = 2)
+    wordCountDs.saveToCassandra("objektwerks", "words", SomeColumns("word", "count"))
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
@@ -42,7 +42,7 @@ class SparkStreamingKafkaCassandraTest extends FunSuite with Matchers {
   test("streaming cassandra read") {
     import com.datastax.spark.connector.streaming._
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
-    val rdd = streamingContext.cassandraTable("streaming", "words").select("word", "count").cache
+    val rdd = streamingContext.cassandraTable("objektwerks", "words").select("word", "count").cache
     rdd.count shouldBe 96
     rdd.map(_.getInt("count")).sum shouldBe 169.0
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
