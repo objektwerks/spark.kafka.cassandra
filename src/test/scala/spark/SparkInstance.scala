@@ -85,19 +85,18 @@ object SparkInstance {
 
   def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
     rdd
-      .flatMap(l => l.split("\\W+"))
+      .flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
-      .map(w => (w, 1))
+      .map(word => (word, 1))
       .reduceByKey(_ + _)
   }
 
   def countWords(ds: DStream[String]): DStream[(String, Int)] = {
-    ds
-      .flatMap(l => l.split("\\W+"))
+    ds.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
-      .map(w => (w, 1))
+      .map(word => (word, 1))
       .reduceByKey(_ + _)
   }
 }
