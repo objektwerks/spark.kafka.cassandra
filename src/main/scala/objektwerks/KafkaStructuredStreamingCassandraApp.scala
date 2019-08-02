@@ -79,7 +79,10 @@ object KafkaStructuredStreamingCassandraApp extends App {
       batchDF
         .write
         // .cassandraFormat("keyvalue", "kssc") // doesn't exist - yet.;)
+        .format("org.apache.spark.sql.cassandra")
         .option("cluster", "Test Cluster")
+        .option("keyspace", "kssc")
+        .option("table", "keyvalue")
         .mode("append")
         .save()
     }
