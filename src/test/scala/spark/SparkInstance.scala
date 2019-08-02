@@ -42,6 +42,7 @@ object SparkInstance {
     session.execute("INSERT INTO test.kv(key, value) VALUES ('k1', 1);")
     session.execute("INSERT INTO test.kv(key, value) VALUES ('k2', 2);")
     session.execute("INSERT INTO test.kv(key, value) VALUES ('k3', 3);")
+    ()
   }
 
   def createCassandraStreamingKeyspace(): Unit = {

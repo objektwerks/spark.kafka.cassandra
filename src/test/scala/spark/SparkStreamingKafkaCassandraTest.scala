@@ -43,8 +43,8 @@ class SparkStreamingKafkaCassandraTest extends FunSuite with Matchers {
     import com.datastax.spark.connector.streaming._
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
     val rdd = streamingContext.cassandraTable("streaming", "words").select("word", "count").cache
-    rdd.count shouldBe 95
-    rdd.map(_.getInt("count")).sum shouldBe 168
+    rdd.count shouldBe 96
+    rdd.map(_.getInt("count")).sum shouldBe 169.0
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
   }
 
