@@ -6,18 +6,12 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+import org.scalatest.{FunSuite, Matchers}
 
 import scala.collection.mutable
 
-class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll with Matchers {
+class SparkStreamingKafkaCassandraTest extends FunSuite with Matchers {
   import SparkInstance._
-
-  override protected def beforeAll(): Unit = {
-    createKafkaTopic()
-    sendKafkaProducerMessages()
-    createCassandraStreamingKeyspace()
-  }
 
   test("stateless spark streaming") {
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
@@ -57,7 +51,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll w
   test("kafka spark streaming") {
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
     val kafkaParams = kafkaConsumerProperties
-    val kafkaTopics = Set(kafkaTopic)
+    val kafkaTopics = Set(licenseTopic)
     val stream = KafkaUtils.createDirectStream[String, String](
       streamingContext,
       PreferConsistent,

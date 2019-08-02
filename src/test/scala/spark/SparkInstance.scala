@@ -26,7 +26,12 @@ object SparkInstance {
   val license = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
   val kafkaProducerProperties = loadProperties("/kafka-producer.properties")
   val kafkaConsumerProperties = toMap(loadProperties("/kafka-consumer.properties"))
-  val kafkaTopic = "license"
+  val licenseTopic = "license"
+
+  createCassandraTestKeyspace()
+  createCassandraStreamingKeyspace()
+  createKafkaTopic(licenseTopic)
+  sendKafkaProducerMessages(licenseTopic)
 
   def createCassandraTestKeyspace(): Unit = {
     val cluster = Cluster.builder.addContactPoint("127.0.0.1").build()
@@ -48,22 +53,22 @@ object SparkInstance {
     ()
   }
 
-  def createKafkaTopic(): Boolean = {
+  def createKafkaTopic(topic: String): Boolean = {
     val adminClientProperties = new Properties()
     adminClientProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
     val adminClient = AdminClient.create(adminClientProperties)
-    val newTopic = new NewTopic(kafkaTopic, 1, 1.toShort)
+    val newTopic = new NewTopic(topic, 1, 1.toShort)
     val createTopicResult = adminClient.createTopics(List(newTopic).asJavaCollection)
-    createTopicResult.values.containsKey(kafkaTopic)
+    createTopicResult.values.containsKey(topic)
   }
 
-  def sendKafkaProducerMessages(): Unit = {
+  def sendKafkaProducerMessages(topic: String): Unit = {
     val producer = new KafkaProducer[String, String](kafkaProducerProperties)
     val rdd = sparkContext.makeRDD(license)
     val wordCounts = countWords(rdd).collect()
     wordCounts.foreach { wordCount =>
       val (word, count) = wordCount
-      val record = new ProducerRecord[String, String](kafkaTopic, 0, word, count.toString)
+      val record = new ProducerRecord[String, String](topic, 0, word, count.toString)
       val metadata = producer.send(record).get()
       logger.info(s"Producer -> topic: ${metadata.topic} partition: ${metadata.partition} offset: ${metadata.offset}")
       logger.info(s"Producer -> key: ${record.key} value: ${record.value}")
@@ -78,10 +83,7 @@ object SparkInstance {
     properties
   }
 
-  def toMap(properties: Properties): Map[String, String] = {
-    import scala.collection.JavaConverters._
-    properties.asScala.toMap
-  }
+  def toMap(properties: Properties): Map[String, String] = properties.asScala.toMap
 
   def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
     rdd
