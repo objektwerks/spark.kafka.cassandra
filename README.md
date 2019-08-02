@@ -42,6 +42,15 @@ Run
 
 1. sbt clean test run
 
+Logs
+----
+1. ./target/app.log
+2. ./target/test.log
+
+Events
+------
+1. ./target/spark-events
+
 Kafka
 -----
 > source-kssc-topic, license
