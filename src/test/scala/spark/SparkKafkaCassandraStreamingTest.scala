@@ -1,33 +1,22 @@
 package spark
 
-import java.util.Properties
-
-import com.datastax.driver.core.Cluster
 import com.datastax.spark.connector.SomeColumns
-import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
-import org.apache.log4j.Logger
 import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll with Matchers {
   import SparkInstance._
 
-  val logger = Logger.getLogger(classOf[SparkKafkaCassandraStreamingTest])
-  val sparkContext = sparkSession.sparkContext
-
   override protected def beforeAll(): Unit = {
     createKafkaTopic()
     sendKafkaProducerMessages()
-    createCassandraKeyspace()
+    createCassandraStreamingKeyspace()
   }
 
   test("stateless spark streaming") {
@@ -36,7 +25,7 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll w
     val ds = streamingContext.queueStream(queue)
     queue += sparkContext.makeRDD(license)
     val wordCountDs = countWords(ds)
-    wordCountDs.saveAsTextFiles("./target/output/test/ds")
+    wordCountDs.saveAsTextFiles("./target/test/ds1")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
@@ -74,50 +63,9 @@ class SparkKafkaCassandraStreamingTest extends FunSuite with BeforeAndAfterAll w
       PreferConsistent,
       Subscribe[String, String](kafkaTopics, kafkaParams)
     )
-    stream.saveAsTextFiles("./target/output/test/text/dstream")
+    stream.saveAsTextFiles("./target/test/ds2")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-  }
-
-  def createKafkaTopic(): Boolean = {
-    val adminClientProperties = new Properties()
-    adminClientProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
-    val adminClient = AdminClient.create(adminClientProperties)
-    val newTopic = new NewTopic(kafkaTopic, 1, 1.toShort)
-    val createTopicResult = adminClient.createTopics(List(newTopic).asJavaCollection)
-    createTopicResult.values().containsKey(kafkaTopic)
-  }
-
-  def sendKafkaProducerMessages(): Unit = {
-    val producer = new KafkaProducer[String, String](kafkaProducerProperties)
-    val rdd = sparkContext.makeRDD(license)
-    val wordCounts = countWords(rdd).collect()
-    wordCounts.foreach { wordCount =>
-      val (word, count) = wordCount
-      val record = new ProducerRecord[String, String](kafkaTopic, 0, word, count.toString)
-      val metadata = producer.send(record).get()
-      logger.info(s"Producer -> topic: ${metadata.topic} partition: ${metadata.partition} offset: ${metadata.offset}")
-      logger.info(s"Producer -> key: ${record.key} value: ${record.value}")
-    }
-    producer.flush()
-    producer.close()
-  }
-
-  def createCassandraKeyspace(): Unit = {
-    val cluster = Cluster.builder.addContactPoint("127.0.0.1").build()
-    val session = cluster.connect()
-    session.execute("DROP KEYSPACE IF EXISTS streaming;")
-    session.execute("CREATE KEYSPACE streaming WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
-    session.execute("CREATE TABLE streaming.words(word text PRIMARY KEY, count int);")
-    ()
-  }
-
-  def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
-    rdd.flatMap(l => l.split("\\P{L}+")).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
-  }
-
-  def countWords(ds: DStream[String]): DStream[(String, Int)] = {
-    ds.flatMap(l => l.split("\\P{L}+")).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
   }
 }

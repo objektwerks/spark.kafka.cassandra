@@ -1,30 +1,19 @@
 package spark
 
-import com.datastax.driver.core.Cluster
 import com.datastax.spark.connector._
 import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
-import scala.util.{Failure, Success}
 import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 case class KeyValue(key: String, value: Int)
 
 class SparkCassandraConnectorTest extends FunSuite with BeforeAndAfterAll with Matchers {
-  val sparkContext = SparkInstance.sparkSession.sparkContext
+  import SparkInstance._
 
-  override protected def beforeAll(): Unit = {
-    val cluster = Cluster.builder.addContactPoint("127.0.0.1").build()
-    val session = cluster.connect()
-    session.execute("DROP KEYSPACE IF EXISTS test;")
-    session.execute("CREATE KEYSPACE test WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
-    session.execute("CREATE TABLE test.kv(key text PRIMARY KEY, value int);")
-    session.execute("INSERT INTO test.kv(key, value) VALUES ('k1', 1);")
-    session.execute("INSERT INTO test.kv(key, value) VALUES ('k2', 2);")
-    session.execute("INSERT INTO test.kv(key, value) VALUES ('k3', 3);")
-    ()
-  }
+  override protected def beforeAll(): Unit = createCassandraTestKeyspace()
 
   test("read") {
     val rdd = sparkContext.cassandraTable(keyspace = "test", table = "kv").cache
