@@ -76,11 +76,8 @@ object KafkaStructuredStreamingCassandraApp extends App {
     .foreachBatch { (batchDF: DataFrame, _: Long) =>
       batchDF
         .write
-        // .cassandraFormat("keyvalue", "kssc") // doesn't exist - yet.;)
         .format("org.apache.spark.sql.cassandra")
-        .option("cluster", "Test Cluster")
-        .option("keyspace", "kssc")
-        .option("table", "keyvalue")
+        .options(Map("keyspace" -> "kssc", "table" -> "keyvalue"))
         .mode("append")
         .save()
     }
