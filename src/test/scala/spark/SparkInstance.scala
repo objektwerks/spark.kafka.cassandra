@@ -93,7 +93,8 @@ object SparkInstance {
   }
 
   def countWords(ds: DStream[String]): DStream[(String, Int)] = {
-    ds.flatMap(line => line.split("\\W+"))
+    ds
+      .flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
       .map(word => (word, 1))
