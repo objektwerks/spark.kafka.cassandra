@@ -81,6 +81,7 @@ object KafkaStructuredStreamingCassandraApp extends App {
         .mode("append")
         .save()
     }
+    .option("checkpointLocation", conf.getString("cassandra-checkpoint-location"))
     .outputMode("update")
     .start
 
