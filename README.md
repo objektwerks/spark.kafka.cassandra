@@ -1,6 +1,7 @@
 Spark, Kafka and Cassandra Prototypes
 -------------------------------------
->The purpose of the project is to test Spark, Spark-Cassandra Connector and Kafka-Spark Streaming features.
+>The purpose of the project is to test Spark ( Streaming, Structured Streaming ), Kafka
+>and Spark Cassandra Connector integration features.
 
 Homebrew
 --------
@@ -19,18 +20,9 @@ Installation
 
 Services
 --------
->Start:
-
-1. brew services start cassandra
-2. brew services start zookeeper
-3. brew services start kafka
-
-
->Stop:
-
-1. brew services stop cassandra
-2. brew services stop kafka
-3. brew services stop zookeeper
+1. brew services start | stop cassandra
+2. brew services start | stop zookeeper
+3. brew services start | stop kafka
 
 Test
 ----
@@ -39,6 +31,15 @@ Test
 Run
 ---
 1. sbt clean test run
+
+UI
+--
+1. SparkUI : localhost:4040
+2. History Server UI : localhost:18080 : start-history-server.sh | stop-history-server.sh
+
+Stop
+----
+1. Control-C
 
 Logs
 ----
