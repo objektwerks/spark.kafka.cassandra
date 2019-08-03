@@ -11,6 +11,10 @@ object KafkaStructuredStreamingCassandraApp extends App {
   val (kafkaBootstrapServers, urls) = ("kafka.bootstrap.servers", conf.getString("kafka-bootstrap-servers"))
   val sourceTopic = conf.getString("source-topic")
 
+  val sparkEventLogDir = conf.getString("spark.eventLog.dir")
+  val sparkEventDirCreated = createSparkEventsDir(sparkEventLogDir)
+  println(s"*** $sparkEventLogDir exists or was created: $sparkEventDirCreated")
+
   val keyValueStructType = new StructType()
     .add(name = "key", dataType = StringType, nullable = false)
     .add(name = "value", dataType = StringType, nullable = false)
@@ -25,7 +29,7 @@ object KafkaStructuredStreamingCassandraApp extends App {
     .master(conf.getString("master"))
     .appName(conf.getString("name"))
     .config("spark.eventLog.enabled", conf.getBoolean("spark.eventLog.enabled"))
-    .config("spark.eventLog.dir", conf.getString("spark.eventLog.dir"))
+    .config("spark.eventLog.dir", sparkEventLogDir)
     .config("spark.cassandra.connection.host", conf.getString("cassandra-host"))
     .config("spark.cassandra.auth.username", conf.getString("cassandra-username"))
     .config("spark.cassandra.auth.password", conf.getString("cassandra-password"))

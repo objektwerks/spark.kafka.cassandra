@@ -30,8 +30,7 @@ Test
 
 Run
 ---
-1. mkdir /tmp/spark-events { Only required once if nonexistent }
-2. sbt clean test run
+1. sbt clean test run
 
 UI
 --
