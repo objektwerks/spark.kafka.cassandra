@@ -35,7 +35,7 @@ Run
 Submit
 ------
 1. sbt clean compile package
-2. ./run.sh
+2. ./submit.sh
 
 UI
 --
