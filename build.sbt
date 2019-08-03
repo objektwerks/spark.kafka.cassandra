@@ -1,6 +1,6 @@
 name := "spark.kafka.cassandra"
 organization := "objektwerks"
-version := "0.1-SNAPSHOT"
+version := "0.1"
 scalaVersion := "2.11.12"
 libraryDependencies ++= {
   val sparkVersion = "2.4.3"
@@ -11,7 +11,6 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion,
     "org.apache.kafka" %% "kafka" % "2.3.0",
     "com.datastax.spark" %% "spark-cassandra-connector" % "2.4.1",
-    "org.slf4j" % "slf4j-api" % "1.7.26",
     "com.typesafe" % "config" % "1.3.4",
     "org.scalatest" %% "scalatest" % "3.0.8" % Test
   )

@@ -32,6 +32,11 @@ Run
 ---
 1. sbt clean test run
 
+Submit
+------
+1. sbt clean compile package
+2. ./run.sh
+
 UI
 --
 1. SparkUI : localhost:4040
