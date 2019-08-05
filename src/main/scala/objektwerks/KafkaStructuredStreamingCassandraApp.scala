@@ -35,18 +35,18 @@ object KafkaStructuredStreamingCassandraApp {
       .config("spark.cassandra.auth.username", conf.getString("cassandra-username"))
       .config("spark.cassandra.auth.password", conf.getString("cassandra-password"))
       .getOrCreate()
-    println("Initialized Spark KafkaStructuredStreamingCassandraApp. Press Ctrl C to terminate.")
+    println("*** Initialized Spark KafkaStructuredStreamingCassandraApp. Press Ctrl C to terminate.")
 
     sys.addShutdownHook {
       sparkSession.stop
-      println("Terminated Spark KafkaStructuredStreamingCassandraApp.")
+      println("*** Terminated Spark KafkaStructuredStreamingCassandraApp.")
     }
 
     val consoleQuery = sparkSession
       .readStream
       .format("kafka")
       .option(kafkaBootstrapServers, urls)
-      .option("subscribe", s"$sourceTopic")
+      .option("subscribe", sourceTopic)
       .load
       .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)", "CAST(topic AS STRING)")
       .writeStream
