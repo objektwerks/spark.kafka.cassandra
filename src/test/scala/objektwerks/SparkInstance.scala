@@ -28,11 +28,6 @@ object SparkInstance {
   val kafkaConsumerProperties = toMap(loadProperties("/kafka-consumer.properties"))
   val licenseTopic = "license"
 
-  createCassandraTestKeyspace()
-  createCassandraStreamingKeyspace()
-  createKafkaTopic(licenseTopic)
-  sendKafkaProducerMessages(licenseTopic)
-
   def createCassandraTestKeyspace(): Unit = {
     val cluster = Cluster.builder.addContactPoint("127.0.0.1").build()
     val session = cluster.connect()

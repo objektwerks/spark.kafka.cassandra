@@ -6,12 +6,18 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
 import scala.collection.mutable
 
-class SparkStreamingKafkaCassandraTest extends FunSuite with Matchers {
+class SparkStreamingKafkaCassandraTest extends FunSuite with BeforeAndAfterAll with Matchers {
   import SparkInstance._
+
+  override protected def beforeAll(): Unit = {
+    createCassandraStreamingKeyspace()
+    createKafkaTopic(licenseTopic)
+    sendKafkaProducerMessages(licenseTopic)
+  }
 
   test("stateless spark streaming") {
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
@@ -32,8 +38,8 @@ class SparkStreamingKafkaCassandraTest extends FunSuite with Matchers {
     val ds = streamingContext.queueStream(queue)
     queue += sparkContext.makeRDD(license)
     val wordCountDs = countWords(ds)
-    wordCountDs.repartitionByCassandraReplica(keyspaceName = "objektwerks", tableName = "words", partitionsPerHost = 2)
-    wordCountDs.saveToCassandra("objektwerks", "words", SomeColumns("word", "count"))
+    wordCountDs.repartitionByCassandraReplica(keyspaceName = "streaming", tableName = "words", partitionsPerHost = 2)
+    wordCountDs.saveToCassandra("streaming", "words", SomeColumns("word", "count"))
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
@@ -42,7 +48,7 @@ class SparkStreamingKafkaCassandraTest extends FunSuite with Matchers {
   test("streaming cassandra read") {
     import com.datastax.spark.connector.streaming._
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(1000))
-    val rdd = streamingContext.cassandraTable("objektwerks", "words").select("word", "count").cache
+    val rdd = streamingContext.cassandraTable("streaming", "words").select("word", "count").cache
     rdd.count shouldBe 96
     rdd.map(_.getInt("count")).sum shouldBe 169.0
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
