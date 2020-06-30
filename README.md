@@ -15,8 +15,7 @@ Installation
 2. brew install scala
 3. brew install sbt
 4. brew install cassandra
-5. brew install kafka
-6. brew install zookeeper
+5. brew install kafka  ( which installs zookeeper )
 
 Services
 --------
