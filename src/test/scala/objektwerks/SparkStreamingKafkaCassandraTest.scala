@@ -1,16 +1,19 @@
 package objektwerks
 
 import com.datastax.spark.connector.SomeColumns
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.mutable
 
-class SparkStreamingKafkaCassandraTest extends FunSuite with BeforeAndAfterAll with Matchers {
+class SparkStreamingKafkaCassandraTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
   import SparkInstance._
 
   override protected def beforeAll(): Unit = {

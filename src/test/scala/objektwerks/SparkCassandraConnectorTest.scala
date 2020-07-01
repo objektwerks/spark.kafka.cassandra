@@ -1,7 +1,9 @@
 package objektwerks
 
 import com.datastax.spark.connector._
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
@@ -10,7 +12,7 @@ import scala.util.{Failure, Success}
 
 case class KeyValue(key: String, value: Int)
 
-class SparkCassandraConnectorTest extends FunSuite with BeforeAndAfterAll with Matchers {
+class SparkCassandraConnectorTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
   import SparkInstance._
 
   override protected def beforeAll(): Unit = createCassandraTestKeyspace()

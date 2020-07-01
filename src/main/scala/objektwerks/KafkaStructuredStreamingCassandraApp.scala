@@ -1,7 +1,10 @@
 package objektwerks
 
-import com.datastax.driver.core.Cluster
 import com.typesafe.config.ConfigFactory
+import com.datastax.oss.driver.api.core.CqlSession
+
+import java.net.InetSocketAddress
+
 import org.apache.spark.sql.streaming.OutputMode
 import org.apache.spark.sql.types.{StringType, StructType}
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -20,8 +23,13 @@ object KafkaStructuredStreamingCassandraApp {
       .add(name = "key", dataType = StringType, nullable = false)
       .add(name = "value", dataType = StringType, nullable = false)
 
-    val cluster = Cluster.builder.addContactPoint("127.0.0.1").build
-    val session = cluster.connect
+    val address = new InetSocketAddress("127.0.0.1", 9042)
+    val datacenter = "datacenter1"
+    val session = CqlSession
+      .builder()
+      .addContactPoint(address)
+      .withLocalDatacenter(datacenter)
+      .build()
     session.execute("DROP KEYSPACE IF EXISTS kssc;")
     session.execute("CREATE KEYSPACE kssc WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };")
     session.execute("CREATE TABLE kssc.keyvalue(key text PRIMARY KEY, value text);")
