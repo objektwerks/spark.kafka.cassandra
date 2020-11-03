@@ -1,16 +1,10 @@
 Spark, Kafka and Cassandra
 --------------------------
->The purpose of the project is to test Spark ( Streaming, Structured Streaming ), Kafka
->and Spark Cassandra Connector integration features.
-
-Homebrew
---------
->Install Homebrew on OSX.
+>Spark ( Streaming, Structured Streaming ), Kafka and
+>Spark Cassandra Connector integration feature tests.
 
 Installation
 ------------
->Install the following packages via Homebrew:
-
 1. brew tap homebrew/services
 2. brew install scala
 3. brew install sbt
