@@ -11,7 +11,7 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion,
     "org.apache.kafka" %% "kafka" % "2.7.0",
     "com.datastax.spark" %% "spark-cassandra-connector" % "3.0.0",
-    "com.typesafe" % "config" % "1.4.0",
+    "com.typesafe" % "config" % "1.4.1",
     "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion % Test,
     "org.scalatest" %% "scalatest" % "3.2.9" % Test
   )
