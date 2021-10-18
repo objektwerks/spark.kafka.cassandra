@@ -1,7 +1,7 @@
 name := "spark.kafka.cassandra"
 organization := "objektwerks"
 version := "0.1-SNAPSHOT"
-scalaVersion := "2.12.14"
+scalaVersion := "2.13.6"
 libraryDependencies ++= {
   val sparkVersion = "3.2.0"
   Seq(
