@@ -13,6 +13,6 @@ libraryDependencies ++= {
     "com.datastax.spark" %% "spark-cassandra-connector" % "3.1.0",
     "com.typesafe" % "config" % "1.4.2",
     "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion % Test,
-    "org.scalatest" %% "scalatest" % "3.2.10" % Test
+    "org.scalatest" %% "scalatest" % "3.2.11" % Test
   )
 }
