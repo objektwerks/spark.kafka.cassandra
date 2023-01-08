@@ -1,9 +1,9 @@
 name := "spark.kafka.cassandra"
 organization := "objektwerks"
 version := "0.1-SNAPSHOT"
-scalaVersion := "2.13.10"
+scalaVersion := "2.12.17"
 libraryDependencies ++= {
-  val sparkVersion = "3.3.1"
+  val sparkVersion = "2.4.8"
   Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion,
     "org.apache.spark" %% "spark-streaming" % sparkVersion,
